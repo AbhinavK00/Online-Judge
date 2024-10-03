@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { UserContext } from '../context/userContext';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
-    /*
+    const {user} = useContext(UserContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        axios.get('/verify')
-        .then( (res) =>{
-            if(!res.data.success){
-                toast.error("Login first to access dashboard")
-                navigate('/');
-            }
-        })
-    }, []);
-    */
-
     const [questions, setQuestions] = useState([]);
     
     useEffect(() => {
+        if(user === null){
+            toast.error("Please login first");
+            navigate('/');
+        }
         axios.get('/ques/list')
         .then(res => setQuestions(res.data))
         .catch(err => console.log(err))

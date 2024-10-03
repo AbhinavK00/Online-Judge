@@ -3,8 +3,9 @@ import { useContext } from "react"
 import axios from 'axios'
 import moment from 'moment'
 import stubs from '../assets/defaultStubs';
-import { UserContext } from "../helper/userContext"
-import { useParams } from 'react-router-dom';
+import { UserContext } from "../context/userContext"
+import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 export function Compiler() {
@@ -13,7 +14,7 @@ export function Compiler() {
   const [statement, setStatement] = useState('');
   const [testCases, setTestCases] = useState('');
   const [answers, setAnswers] = useState('');
-  //
+  const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [lang, setLang] = useState('cpp');
   const [output, setOutput] = useState('');
@@ -28,6 +29,10 @@ export function Compiler() {
   }, [lang]);
 
   useEffect(() => {
+      if(user === null){
+          toast.error("Please login first");
+          navigate('/');
+      }
       axios.get('/ques/'+id)
       .then(res => {
           console.log(res);
@@ -202,7 +207,7 @@ export function Compiler() {
           setCode(e.target.value);
         }}></textarea>
       <br />
-      <textarea
+      <textarea className = "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter you Input here"
         rows="5" cols="75"
         value={input}
         onChange={(e) => {
@@ -210,8 +215,10 @@ export function Compiler() {
           setInput(e.target.value);
         }}></textarea>
       <br />
-      <button onClick={handleRun}>Run</button>
-      <button onClick={handleSubmit}>Submit</button>
+      <div class="flex flex-row items-center space-x-2">
+      <button class = "py-1 px-4 bg-sky-500 hover:bg-sky-700" onClick={handleRun}>Run</button>
+      <button class = "py-1 px-4 bg-sky-500 hover:bg-sky-700" onClick={handleSubmit}>Submit</button>
+      </div>
       <p>{status}</p>
       <p>{renderTimeDetails()}</p>
       <p>{output}</p>
